@@ -1,32 +1,24 @@
 #!/bin/bash
+total() {
+    ciudad="$1"
+    total=0
 
+    while IFS= read -r line; do
+        ciudad_linea=$(echo "$line" | awk '{print $1}')
+        if [ "$ciudad" == "$ciudad_linea" ]; then
+            consumo=$(echo "$line" | awk '{print $4}')
+            total=$((total + consumo))
+        fi
+    done < consumo.txt
 
-
-
-echo "Di una ciudad:"
-read ciudad
-
-suma=0
-
-
-check_ciudad() {
-  grep -q "$1" consumo.txt
+    echo "El total de consumo en $ciudad es: $total"
 }
 
-while ! check_ciudad "$ciudad"; do
-  echo "La ciudad no existe en el archivo. Introduzca otra ciudad:"
-  read ciudad
+echo "di un nombre de ciudad:"
+read ciudad
+
+while ! grep -q "$ciudad" consumo.txt; do
+    echo "No hay ninguna con ese nombre intentalo de nuevo:"
+    read ciudad
 done
-
-
-suma=0
-while read line; do
-  city=$(echo $line | awk -F, '{print $1}')
-  consumo=$(echo $line | awk -F, '{print $4}')
-
-  if [ "$city" == "$ciudad" ]; then
-    suma=$((suma + consumo))
-  fi
-done < consumo.txt
-
-echo "El consumo total de $ciudad es: $suma"
+total "$ciudad"
