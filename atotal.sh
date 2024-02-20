@@ -1,16 +1,31 @@
 #!/bin/bash
 
+
+
+
 echo "Di una ciudad:"
 read ciudad
 
 suma=0
 
+
+check_ciudad() {
+  grep -q "$1" consumo.txt
+}
+
+while ! check_ciudad "$ciudad"; do
+  echo "La ciudad no existe en el archivo. Introduzca otra ciudad:"
+  read ciudad
+done
+
+
+suma=0
 while read line; do
-  nombre_ciudad=$(echo $line | awk -F, '{print $1}')
+  city=$(echo $line | awk -F, '{print $1}')
   consumo=$(echo $line | awk -F, '{print $4}')
 
-  if [ "$ciudad" == "$nombre_ciudad" ]; then
-    suma=$((consumo  + suma))
+  if [ "$city" == "$ciudad" ]; then
+    suma=$((suma + consumo))
   fi
 done < consumo.txt
 
